@@ -15,11 +15,27 @@
     <img src="https://img.shields.io/github/license/Kludex/progressive-mypy">
 </p>
 
+This is a package made for improve type annotation coverage on big repositories.
+
+What this package does:
+- [`dump`](#dump): Generates a **list** of files that are currently not type annotated.
+- [`check`](#check): Given an input of files:
+  - If a file is in the **list**, and is fully type annotated, it will be removed from the **list**.
+  - If a file is in the **list**, and is **not** fully annotated, it will be ignored.
+  - If a file is **not** in the **list**, and is fully annotated, it will be ignored.
+  - If a file is **not** in the **list**, and is **not** fully annotated, it will raise errors.
+
 ## Installation
 
 ```bash
 pip install progressive-mypy
 ```
+
+## Usage
+
+### Dump
+
+### Check
 
 ## License
 
