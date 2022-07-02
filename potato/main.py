@@ -1,2 +1,2 @@
-def potato(a):
+def potato(a: int) -> int:
     return 1

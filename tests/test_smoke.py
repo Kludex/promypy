@@ -1,7 +1,7 @@
 import inspect
 
-import progressive_mypy
+import promypy
 
 
 def test_smoke() -> None:
-    assert inspect.ismodule(progressive_mypy)
+    assert inspect.ismodule(promypy)
