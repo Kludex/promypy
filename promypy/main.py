@@ -91,9 +91,9 @@ def check(
     modify_ignored_files = all_ignored_files > ignored_files
 
     if modify_ignored_files:
-        echo(f"List of files in {ignore_file} has been updated.")
+        echo(f"{ignore_file} has been updated.")
         with ignore_file.open("w") as file:
-            file.write("\n".join(sorted(ignored_files)))
+            echo("\n".join(sorted(ignored_files)), file=file)
 
     for line in output:
         echo(line)
@@ -104,7 +104,7 @@ def check(
 
     if len(output) == 0:
         echo("Success! 🚀")
-        echo(f"{len(ignored_files)} files are still ignored.")
+        echo(f"Number of files missing: {len(ignored_files)}.")
         raise typer.Exit(0)
 
     raise typer.Exit(result.returncode)

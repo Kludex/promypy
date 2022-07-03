@@ -44,7 +44,7 @@ repos:
       - id: mypy
 
   - repo: ../promypy
-    rev: 6de6a75aa38427cececf36bb3027dea426c7ec94
+    rev: f6f0eb28eb8849b1b6c98cc94618f4b8827a43ff
     hooks:
       - id: promypy
         args:
