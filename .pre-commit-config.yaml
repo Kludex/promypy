@@ -48,3 +48,5 @@ repos:
     rev: 6de6a75aa38427cececf36bb3027dea426c7ec94
     hooks:
       - id: promypy
+        args:
+          - --ignore-file=.mypyignore

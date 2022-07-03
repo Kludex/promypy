@@ -1,2 +1,2 @@
-def func() -> None:
-    ...
+def func() -> int:
+    return 1
