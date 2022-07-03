@@ -6,7 +6,6 @@
         <img src="https://img.shields.io/github/last-commit/Kludex/promypy" alt="Latest Commit">
     </a>
         <img src="https://img.shields.io/github/workflow/status/Kludex/promypy/CI">
-        <img src="https://img.shields.io/codecov/c/github/Kludex/promypy">
     <br />
     <a href="https://pypi.org/project/promypy" target="_blank">
         <img src="https://img.shields.io/pypi/v/promypy" alt="Package version">
