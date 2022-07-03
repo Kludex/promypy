@@ -89,7 +89,7 @@ Add the following to your `.pre-commit-config.yaml` file:
 
 ```yaml
   - repo: https://github.com/Kludex/no-optional
-    rev: 0.1.0
+    rev: 0.2.0
     hooks:
       - id: promypy
         args:
