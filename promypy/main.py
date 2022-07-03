@@ -40,7 +40,7 @@ def write_to_file(file: Optional[str], filenames: Set[str]) -> None:
 @app.command()
 def dump(
     files: List[str], mypy_args: Optional[str] = None, output: Optional[str] = None
-):
+) -> None:
     """Generate a list of files that are not fully type annotated."""
     filenames = set()
     args = shlex.split(mypy_args or "")
@@ -80,9 +80,9 @@ def check(
     for line in result.stdout.split("\n"):
         match = re.match(FILE_PATTERN, line)
         if ":" in line and match:
-            file = match.group(1)
-            files_with_error.add(file)
-            if file not in files_to_ignore:
+            filename = match.group(1)
+            files_with_error.add(filename)
+            if filename not in files_to_ignore:
                 output.append(line)
 
     files_to_remove = files_to_ignore - files_with_error
@@ -91,8 +91,9 @@ def check(
     modify_ignored_files = all_ignored_files > ignored_files
 
     if modify_ignored_files:
+        echo(f"{ignore_file} has been updated.")
         with ignore_file.open("w") as file:
-            file.write("\n".join(sorted(ignored_files)))
+            echo("\n".join(sorted(ignored_files)), file=file)
 
     for line in output:
         echo(line)
@@ -103,14 +104,11 @@ def check(
 
     if len(output) == 0:
         echo("Success! 🚀")
-        echo(f"{len(ignored_files)} files are still ignored.")
+        echo(f"Number of files missing: {len(ignored_files)}.")
         raise typer.Exit(0)
-
-    if modify_ignored_files:
-        echo(f"List of files in {ignore_file} has been updated.")
-        raise typer.Exit(1)
 
     raise typer.Exit(result.returncode)
 
 
-app()
+if __name__ == "__main__":
+    app()

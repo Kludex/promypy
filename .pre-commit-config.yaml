@@ -34,12 +34,13 @@ repos:
     hooks:
       - id: flake8
         additional_dependencies:
-          - flake8-bugbear
           - flake8-comprehensions
           - flake8-tidy-imports
           - flake8-typing-imports
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.960
-    hooks:
-      - id: mypy
+  # - repo: ../promypy
+  #   rev: 2387299600e7e58ff45a7a9180e5b3c15917b9bd
+  #   hooks:
+  #     - id: promypy
+  #       args:
+  #         - --ignore-file=.mypyignore
