@@ -1,2 +1,2 @@
-def potato(a: int) -> int:
-    return 1
+def potato(a: int) -> float:
+    return 1.0
