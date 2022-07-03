@@ -51,6 +51,8 @@ There are two commands available: `dump` and `check`.
 
 ### Dump
 
+The idea of this command is to store the list of files that are not fully type annotated into a file.
+
 ```bash
 Usage: promypy dump [OPTIONS] FILES...
 
@@ -79,6 +81,19 @@ Options:
   -f, --ignore-file PATH  [required]
   --mypy-args TEXT
   --help                  Show this message and exit.
+```
+
+### Pre-commit
+
+Add the following to your `.pre-commit-config.yaml` file:
+
+```yaml
+  - repo: https://github.com/Kludex/no-optional
+    rev: 0.1.0
+    hooks:
+      - id: promypy
+        args:
+        - --ignore-file=<dump_filename>
 ```
 
 ## License

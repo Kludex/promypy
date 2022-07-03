@@ -1,6 +1,0 @@
-def pot(b) -> int:
-    ...
-
-
-def bat(b) -> int:
-    ...
