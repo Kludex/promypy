@@ -38,9 +38,9 @@ repos:
           - flake8-tidy-imports
           - flake8-typing-imports
 
-  - repo: ../promypy
-    rev: 2387299600e7e58ff45a7a9180e5b3c15917b9bd
-    hooks:
-      - id: promypy
-        args:
-          - --ignore-file=.mypyignore
+  # - repo: ../promypy
+  #   rev: 2387299600e7e58ff45a7a9180e5b3c15917b9bd
+  #   hooks:
+  #     - id: promypy
+  #       args:
+  #         - --ignore-file=.mypyignore
