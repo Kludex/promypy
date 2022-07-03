@@ -45,6 +45,6 @@ repos:
       - id: mypy
 
   - repo: ../promypy
-    rev: 84f01ac09fcd8610824f9626a590b83cfae9bcbd
+    rev: 6de6a75aa38427cececf36bb3027dea426c7ec94
     hooks:
-    -   id: foo
+      - id: promypy
