@@ -5,6 +5,7 @@ import subprocess
 import sys
 from contextlib import ExitStack
 from pathlib import Path
+from subprocess import CompletedProcess
 from typing import List, Optional, Set
 
 import typer
@@ -17,7 +18,7 @@ app = Typer(
 )
 
 
-def run_mypy(args: List[str], capture_output: bool) -> subprocess.CompletedProcess[str]:
+def run_mypy(args: List[str], capture_output: bool) -> "CompletedProcess[str]":
     env = os.environ.copy()
     env["MYPY_FORCE_COLOR"] = "1"
     command = ["mypy", *args]
