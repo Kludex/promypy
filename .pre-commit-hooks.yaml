@@ -1,0 +1,7 @@
+- id: promypy
+  name: promypy
+  description: "Progressive type annotation without regression! 🚀"
+  entry: promypy check
+  language: python
+  types: [python]
+  require_serial: true

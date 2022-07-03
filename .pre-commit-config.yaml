@@ -43,3 +43,8 @@ repos:
     rev: v0.960
     hooks:
       - id: mypy
+
+  - repo: ../promypy
+    rev: 84f01ac09fcd8610824f9626a590b83cfae9bcbd
+    hooks:
+    -   id: foo

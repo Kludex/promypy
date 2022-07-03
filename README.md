@@ -23,8 +23,8 @@ Using `mypy`, you'd probably add a [`files`](https://mypy.readthedocs.io/en/stab
 entry on your configuration file, and each time someone on the team wants to include type annotation on that file,
 you'd add on the `files` list. There are a some problems with this approach:
 
-1. Each new file doesn't need to be added on the `files` list.
-2. If a file gets fully type annotated, and you didn't even notice, it will not be added to the `files` list.
+1. Each new file is not added to the `files` list.
+2. If a file gets fully type annotated, you don't notice, and it will not be added to the `files` list.
 
 The `1.` is more important, as we don't want to have regressions on our goal to have our code source fully type annotated.
 But you don't want to worry about `2.` as well...
