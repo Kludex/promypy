@@ -90,7 +90,7 @@ def check(
 
     modify_ignored_files = all_ignored_files > ignored_files
 
-    if modify_ignored_files:
+    if modify_ignored_files and len(ignored_files) != 0:
         echo(f"{ignore_file} has been updated.")
         with ignore_file.open("w") as file:
             echo("\n".join(sorted(ignored_files)), file=file)
@@ -100,15 +100,16 @@ def check(
 
     if len(output) == 0 and len(ignored_files) == 0:
         echo("This project is now fully type annotated! 🎉")
-        raise typer.Exit(0)
+        ignore_file.unlink()
+        raise typer.Exit(1)
 
     if len(output) == 0:
         echo("Success! 🚀")
         echo(f"Number of files missing: {len(ignored_files)}.")
-        raise typer.Exit(0)
+        raise typer.Exit(1 if modify_ignored_files else 0)
 
     raise typer.Exit(result.returncode)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     app()
