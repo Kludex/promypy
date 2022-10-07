@@ -1,14 +1,17 @@
 import os
 import re
 import shlex
-import subprocess
 import sys
+from concurrent.futures import TimeoutError, as_completed
 from contextlib import ExitStack
+from glob import glob
 from pathlib import Path
-from subprocess import CompletedProcess
 from typing import List, Optional, Set
 
 import typer
+from mypy import api
+from pebble import ProcessPool
+from rich.progress import MofNCompleteColumn, Progress, TimeElapsedColumn
 from typer import Typer, echo
 
 FILE_PATTERN = re.compile(r"^([^:]*.py).*")
@@ -16,13 +19,6 @@ FILE_PATTERN = re.compile(r"^([^:]*.py).*")
 app = Typer(
     help="Progressive type annotation without regression! 🚀", add_completion=False
 )
-
-
-def run_mypy(args: List[str], capture_output: bool) -> "CompletedProcess[str]":
-    env = os.environ.copy()
-    env["MYPY_FORCE_COLOR"] = "1"
-    command = ["mypy", *args]
-    return subprocess.run(command, capture_output=capture_output, env=env, text=True)
 
 
 def write_to_file(file: Optional[str], filenames: Set[str]) -> None:
@@ -40,20 +36,53 @@ def write_to_file(file: Optional[str], filenames: Set[str]) -> None:
 
 @app.command()
 def dump(
-    files: List[str], mypy_args: Optional[str] = None, output: Optional[str] = None
+    directory: str = ".",
+    mypy_args: Optional[str] = None,
+    timeout: int = 10,
+    exclude: Optional[List[str]] = None,
+    output: Optional[str] = None,
 ) -> None:
     """Generate a list of files that are not fully type annotated."""
-    filenames = set()
+    exclude = exclude or []
+    filenames: List[str] = []
+    bad_filenames: Set[str] = set()
     args = shlex.split(mypy_args or "")
+    if directory == ".":
+        directory = os.getcwd()
+    path = str(Path(directory)) + "/**/*.py"
 
-    result = run_mypy(files + args, capture_output=True)
-    for line in result.stdout.split("\n"):
-        match = re.match(FILE_PATTERN, line)
-        if ":" in line and match:
-            file = match.group(1)
-            filenames.add(file)
+    for filename in glob(path, recursive=True):
+        pure_filename = filename[len(directory) + 1 :]
+        if any(pure_filename.startswith(f"{name}") for name in exclude):
+            continue
+        filenames.append(pure_filename)
 
-    write_to_file(output, filenames)
+    with Progress(
+        *Progress.get_default_columns(),
+        TimeElapsedColumn(),
+        MofNCompleteColumn(),
+    ) as progress, ProcessPool() as pool:
+        total = len(filenames)
+        task = progress.add_task("Running mypy...", total=total)
+
+        futures = [
+            pool.submit(api.run, timeout=timeout, args=[filename, *args])
+            for filename in filenames
+        ]
+
+        for filename, future in zip(filenames, as_completed(futures)):
+            include_filename = True
+            try:
+                include_filename = bool(future.result()[2])
+            except TimeoutError:
+                progress.console.print("TimeoutError: ", filename)
+            except Exception as e:
+                progress.console.print("Exception: ", e)
+            if include_filename:
+                bad_filenames.add(filename)
+            progress.advance(task)
+
+    write_to_file(output, bad_filenames)
 
 
 @app.command(help="Check the given files with mypy, applying a set of custom rules.")
@@ -76,15 +105,17 @@ def check(
 
     files_with_error = set()
     args = shlex.split(mypy_args or "")
-    result = run_mypy(files + args, capture_output=True)
+    result, _, exit_code = api.run(files + args)
+
     output = []
-    for line in result.stdout.split("\n"):
-        match = re.match(FILE_PATTERN, line)
-        if ":" in line and match:
-            filename = match.group(1)
-            files_with_error.add(filename)
-            if filename not in files_to_ignore:
-                output.append(line)
+    if exit_code != 0:
+        for line in result.split("\n"):
+            match = re.match(FILE_PATTERN, line)
+            if ":" in line and match:
+                filename = match.group(1)
+                files_with_error.add(filename)
+                if filename not in files_to_ignore:
+                    output.append(line)
 
     files_to_remove = files_to_ignore - files_with_error
     ignored_files = all_ignored_files - files_to_remove
@@ -109,7 +140,7 @@ def check(
         echo(f"Number of files missing: {len(ignored_files)}.")
         raise typer.Exit(1 if modify_ignored_files else 0)
 
-    raise typer.Exit(result.returncode)
+    raise typer.Exit(exit_code)
 
 
 if __name__ == "__main__":  # pragma: no cover
