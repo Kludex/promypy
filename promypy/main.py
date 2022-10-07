@@ -73,7 +73,8 @@ def dump(
         for filename, future in zip(filenames, as_completed(futures)):
             include_filename = True
             try:
-                include_filename = bool(future.result()[2])
+                _, _, exit_code = future.result()
+                include_filename = bool(exit_code)
             except TimeoutError:
                 progress.console.print("TimeoutError: ", filename)
             except Exception as e:

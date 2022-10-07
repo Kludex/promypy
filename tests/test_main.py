@@ -10,14 +10,8 @@ from promypy.main import app
 @pytest.mark.parametrize(
     "content, expected",
     [
-        pytest.param(
-            ["def func() -> float:", "    return 1.0"],
-            "Running mypy... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 0:00:00 1/1\n\n",
-        ),
-        pytest.param(
-            ["def func() -> int:", "    return '1'"],
-            "Running mypy... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00 0:00:00 1/1\nmain.py\n",
-        ),
+        pytest.param(["def func() -> float:", "    return 1.0"], "Running mypy..."),
+        pytest.param(["def func() -> int:", "    return '1'"], "main.py"),
     ],
 )
 def test_dump(tmp_path: Path, content: List[str], expected: str) -> None:
@@ -28,7 +22,7 @@ def test_dump(tmp_path: Path, content: List[str], expected: str) -> None:
             f.write("\n".join(content))
 
         result = runner.invoke(app, ["dump"])
-        assert expected == result.stdout
+        assert expected in result.stdout
 
 
 def test_check_complete(tmp_path: Path) -> None:
