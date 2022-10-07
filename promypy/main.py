@@ -48,13 +48,13 @@ def dump(
     bad_filenames: Set[str] = set()
     args = shlex.split(mypy_args or "")
     if directory == ".":
-        directory = os.getcwd()
+        directory = os.getcwd()  # pragma: no cover
     path = str(Path(directory)) + "/**/*.py"
 
     for filename in glob(path, recursive=True):
         pure_filename = filename[len(directory) + 1 :]
         if any(pure_filename.startswith(f"{name}") for name in exclude):
-            continue
+            continue  # pragma: no cover
         filenames.append(pure_filename)
 
     with Progress(
@@ -75,9 +75,9 @@ def dump(
             try:
                 _, _, exit_code = future.result()
                 include_filename = bool(exit_code)
-            except TimeoutError:
+            except TimeoutError:  # pragma: no cover
                 progress.console.print("TimeoutError: ", filename)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 progress.console.print("Exception: ", e)
             if include_filename:
                 bad_filenames.add(filename)
