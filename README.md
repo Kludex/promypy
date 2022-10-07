@@ -88,7 +88,7 @@ Add the following to your `.pre-commit-config.yaml` file:
 
 ```yaml
   - repo: https://github.com/Kludex/promypy
-    rev: 0.2.0
+    rev: 0.3.0
     hooks:
       - id: promypy
         args:
