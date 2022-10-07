@@ -10,19 +10,19 @@ from promypy.main import app
 @pytest.mark.parametrize(
     "content, expected",
     [
-        pytest.param(["def func() -> float:", "    return 1.0"], ["\n"]),
-        pytest.param(["def func() -> int:", "    return '1'"], ["main.py\n"]),
+        pytest.param(["def func() -> float:", "    return 1.0"], "Running mypy..."),
+        pytest.param(["def func() -> int:", "    return '1'"], "main.py"),
     ],
 )
-def test_dump(tmp_path: Path, content: List[str], expected: List[str]) -> None:
+def test_dump(tmp_path: Path, content: List[str], expected: str) -> None:
     runner = CliRunner()
 
     with runner.isolated_filesystem(temp_dir=tmp_path):
         with open("main.py", "w") as f:
             f.write("\n".join(content))
 
-        result = runner.invoke(app, ["dump", "main.py"])
-        assert result.stdout == "\n".join(expected)
+        result = runner.invoke(app, ["dump"])
+        assert expected in result.stdout
 
 
 def test_check_complete(tmp_path: Path) -> None:
