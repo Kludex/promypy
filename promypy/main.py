@@ -94,7 +94,7 @@ def check(
 ) -> None:
     """Check the given files with mypy, applying a set of custom rules.
 
-    Given the the input `files`, and the list of files in the `ignore_file`:
+    Given the input `files`, and the list of files in the `ignore_file`:
     - If a file is in the list, and is fully type annotated, it will be removed from the list.
     - If a file is in the list, and is not fully annotated, it will be ignored.
     - If a file is not in the list, and is fully annotated, it will be ignored.
